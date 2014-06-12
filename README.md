@@ -8,25 +8,25 @@ The FatSecret API for Laravel gives you access through laravel to the FatSecret 
 How to Install
 --------------
 
-1.  Install the `fatsecret/fatsecret-laravel` package
+1.  Install the `braunson/fatsecret-laravel` package
 
     ```shell
-    $ composer require "fatsecret/fatsecret-laravel:1.*"
+    $ composer require "braunson/fatsecret-laravel:dev-master"
     ```
 
-2.  Update `app/config/app.php` to activate Fatsecret
+2.  Update `app/config/app.php` to activate FatSecretAPI package
 
     ```php
     # Add `FatsecretLaravelServiceProvider` to the `providers` array
     'providers' => array(
         ...
-        'Fatsecret\FatsecretLaravel\FatsecretLaravelServiceProvider',
+        'Braunson\FatsecretLaravel\FatsecretLaravelServiceProvider',
     )
 
     # Add the `FatsecretFacade` to the `aliases` array
     'aliases' => array(
         ...
-        'Fatsecret' => 'Fatsecret\FatsecretLaravel\FatsecretFacade',
+        'Fatsecret' => 'Braunson\FatsecretLaravel\FatsecretFacade',
     )
     ```
 
@@ -37,10 +37,10 @@ Configuration
 1.  Generate a template Fatsecret config file
 
     ```shell
-    $ php artisan config:publish fatsecret/fatsecret-laravel
+    $ php artisan config:publish braunson/fatsecret-laravel
     ```
 
-2.  Update `app/config/packages/fatsecret/fatsecret-laravel/config.php` with your
+2.  Update `app/config/packages/braunson/fatsecret-laravel/config.php` with your
     Fatsecret API key and API secret:
 
     ```php
