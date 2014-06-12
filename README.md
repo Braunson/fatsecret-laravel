@@ -85,4 +85,4 @@ License
 -------
 
 The Fatsecret Laravel API is free software released under the MIT License. 
-See [LICENSE.txt](https://github.com/braunson/fatsecret-laravel/blob/master/LICENSE) for details. This is not an offical release and is released seperately from FatSecret.
+See [LICENSE.txt](https://github.com/braunson/fatsecret-laravel/blob/master/LICENSE.txt) for details. This is not an offical release and is released seperately from FatSecret.
