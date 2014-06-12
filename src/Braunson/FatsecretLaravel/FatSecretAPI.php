@@ -129,14 +129,9 @@ class FatSecretAPI{
 				
 		$sessionKey = $doc->session_key;
 	}
-	
-    public function test()
-    {
-        return 'Success!!';
-    }
-    
-    public function searchFoods($search_phrase){
-        $url = static::$base . 'method=foods.search&max_results=' .static::$maxresults. '&search_expression=' . $search_phrase;
+
+    public function searchIngredients($search_phrase, $page=0, $maxresults=50){
+        $url = static::$base . 'method=foods.search&format=json&page_number=' . $page .'&max_results=' . $maxresults . '&search_expression=' . $search_phrase;
 		
 		$oauth = new OAuthBase();
 		
@@ -145,11 +140,26 @@ class FatSecretAPI{
         
 		$signature = $oauth->GenerateSignature($url, $this->_consumerKey, $this->_consumerSecret, null, null, $normalizedUrl, $normalizedRequestParameters);
 		$returnXML = $this->GetQueryResponse($normalizedUrl, $normalizedRequestParameters . '&' . OAuthBase::$OAUTH_SIGNATURE . '=' . urlencode($signature));
-		$doc = new \SimpleXMLElement($returnXML);
-
-		$this->ErrorCheck($doc);
+		//$doc = new \SimpleXMLElement($returnXML);
+		//$this->ErrorCheck($doc);
         
-		return $returnXML;
+		return json_decode($returnXML, true);
+	}
+    
+	function getIngredient($ingredient_id){
+		$url = static::$base . 'method=food.get&format=json&food_id=' . $ingredient_id;
+		
+		$oauth = new OAuthBase();
+		
+		$normalizedUrl;
+		$normalizedRequestParameters;
+		
+		$signature = $oauth->GenerateSignature($url, $this->_consumerKey, $this->_consumerSecret, null, null, $normalizedUrl, $normalizedRequestParameters);
+		$returnJson = $this->GetQueryResponse($normalizedUrl, $normalizedRequestParameters . '&' . OAuthBase::$OAUTH_SIGNATURE . '=' . urlencode($signature));
+		//$doc = new SimpleXMLElement($returnXML);
+		//$this->ErrorCheck($doc);
+        		
+		return json_decode($returnJson, true);
 	}
 
 	/* Private Methods */

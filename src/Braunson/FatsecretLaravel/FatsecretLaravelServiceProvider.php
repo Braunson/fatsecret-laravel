@@ -21,6 +21,11 @@ class FatsecretLaravelServiceProvider extends ServiceProvider {
 	public function boot()
 	{
 		$this->package('braunson/fatsecret-laravel');
+        
+        $this->app['fatsecret'] = $this->app->share(function ($app) {
+            $config = $app['config']['fatsecret-laravel'] ?: $app['config']['fatsecret-laravel::config'];
+            return new FatSecretAPI($config['api_key'], $config['api_secret']);
+        });
 	}
 
 	/**
@@ -30,10 +35,7 @@ class FatsecretLaravelServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-        $this->app['fatsecret'] = $this->app->share(function ($app) {
-            $config = $app['config']['fatsecret-laravel'] ?: $app['config']['fatsecret-laravel::config'];
-            return new FatSecretAPI($config['api_key'], $config['api_secret']);
-        });
+
 	}
 
 	/**
