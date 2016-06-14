@@ -14,7 +14,7 @@ How to Install
 	$ composer require "braunson/fatsecret:dev-master"
 	```
 
-2.  Update `app/config/app.php` to activate FatSecretAPI package
+2.  Update `app/config/app.php` to activate FatSecret package
 
 	```php
 	# Add `FatSecretServiceProvider` to the `providers` array
@@ -34,27 +34,21 @@ How to Install
 Configuration
 -------------
 
-1.  Generate a template FatSecret configuration file
-
-	```shell
-	$ php artisan config:publish braunson/fatsecret
-	```
-
-2.  Update `app/config/packages/braunson/fatsecret/config.php` with your
-	FatSecret API key and API secret:
+Go to `app/config/services.php` and add this in with your details in the provided array
 
 	```php
-	return array(
-		'api_key'    => 'YOUR-API-KEY-HERE',
-		'api_secret' => 'YOUR-API-SECRET-HERE',
-	);
+	// API Key & Secret (http://platform.fatsecret.com)
+	'fatsecret' => [
+		'key' 	 => 'YOUR-API-KEY-HERE',
+		'secret' => 'YOUR-API-SECRET-HERE',
+	],
 	```
 
 
 Usage
 ------------------------
 
-The FatSecretAPI is available as `FatSecret`, for example:
+The FatSecret is available as `FatSecret`, for example:
 
 ```php
 FatSecret::ProfileCreate($userID, &$token, &$secret);
