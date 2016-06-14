@@ -34,7 +34,7 @@ How to Install
 Configuration
 -------------
 
-Go to `app/config/services.php` and add this in with your details in the provided array
+1. Go to `app/config/services.php` and add this in with your details in the provided array
 
 	```php
 	// API Key & Secret (http://platform.fatsecret.com)
