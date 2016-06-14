@@ -23,8 +23,10 @@ How to Install
 		'Braunson\FatSecret\FatSecretServiceProvider',
 	)
 
+	# Add the FatSecret Facade to the `aliases` array
 	'aliases' => array(
 		...
+		'FatSecret' => 'Braunson\FatSecret\Facade',
 	)
 	```
 
