@@ -18,7 +18,8 @@ class FatSecretServiceProvider extends ServiceProvider
 	 */
 	public function boot()
 	{
-		$this->package('braunson/fat-secret');
+		// $this->package('braunson/fat-secret');
+		$this->register();
 	}
 
 	/**
