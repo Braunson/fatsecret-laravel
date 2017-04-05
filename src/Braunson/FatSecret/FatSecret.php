@@ -1,19 +1,20 @@
 <?php
 namespace Braunson\FatSecret;
 
-use Config, Exception, App, Log;
+use Config;
+use Exception;
+use App;
+use Log;
 
 class FatSecret
 {
 	static public $base = 'http://platform.fatsecret.com/rest/server.api?format=json&';
 
 	/* Private Data */
-
 	private $_consumerKey;
 	private $_consumerSecret;
 
 	/* Constructors */
-
 	function __construct($consumerKey, $consumerSecret)
 	{
 		$this->_consumerKey 	= $consumerKey;
@@ -176,7 +177,7 @@ class FatSecret
 	}
 
 	/**
-	 * Reqtrieve an ingredient by ID
+	 * Retrieve an ingredient by ID
 	 *
 	 * @param  integer $ingredient_id  The ingredient ID
 	 * @return json

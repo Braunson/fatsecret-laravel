@@ -56,6 +56,57 @@ FatSecret::ProfileCreate($userID, &$token, &$secret);
 
 For more information on using the FatSecret API check out the [documentation](http://platform.fatsecret.com/api/)
 
+Methods
+------------------------
+
+```php
+FatSecret::searchIngredients($search_phrase, $page, $maxresults)
+```
+- Search ingredients by phrase, page and max results
+
+```php
+FatSecret::getIngredient($ingredient_id)
+```
+- Retrieve an ingredient by ID
+
+```php
+FatSecret::GetKey()
+```
+- Gets the set consumer key
+
+```php
+FatSecret::SetKey()
+```
+- Allows overriding or setting of the consumer key
+
+```php
+FatSecret::GetSecret()
+```
+- Gets the set secret key
+
+```php
+FatSecret::SetSecret()
+```
+- Allows overriding or setting of the secret key
+
+```php
+FatSecret::ProfileCreate($userID, $token, $secret)
+```
+- Allows creation of a profile in FS with a user specific ID.
+
+```php
+FatSecret::ProfileGetAuth($userID, $token, $secret)
+```
+- Get the authentication details of a profile
+
+```php
+FatSecret::ProfileRequestScriptSessionKey($auth, $expires, $consumeWithin, $permittedReferrerRegex, $cookie, $sessionKey)
+```
+- Create a new session for JavaScript API users
+
+
+
+
 
 Reporting Bugs or Feature Requests
 ----------------------------------
