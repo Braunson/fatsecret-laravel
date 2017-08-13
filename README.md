@@ -11,10 +11,10 @@ How to Install
 1.  Install the `braunson/fatsecret` package
 
 	```shell
-	$ composer require "braunson/fatsecret:dev-master"
+	$ composer require "braunson/fatsecret"
 	```
 
-2.  Update `app/config/app.php` to activate FatSecret package
+2.  Update `config/app.php` to activate FatSecret package
 
 	```php
 	# Add `FatSecretServiceProvider` to the `providers` array
@@ -34,19 +34,31 @@ How to Install
 Configuration
 -------------
 
-1. Go to `app/config/services.php` and add this in with your details in the provided array
+1. Go to `config/services.php` and add this in with your details in the provided array
 
 	```php
 	// API Key & Secret (http://platform.fatsecret.com)
-	'fatsecret' => [
-		'key' 	 => 'YOUR-API-KEY-HERE',
-		'secret' => 'YOUR-API-SECRET-HERE',
-	],
+    'fatsecret' => [
+        'secret' => env('FATSECRET_SECRET'),
+        'key' => env('FATSECRET_KEY'),
+    ],
+	```
+
+2. Open your `.env` file and add in
+	```
+	FATSECRET_SECRET=YOUR-API-SECRET
+	FATSECRET_KEY=YOUR-API-KEY
 	```
 
 
 Usage
 ------------------------
+
+When you are using this package in a file, make sure to add this to the top of your file:
+
+```php
+use Fatsecret;
+```
 
 The FatSecret is available as `FatSecret`, for example:
 

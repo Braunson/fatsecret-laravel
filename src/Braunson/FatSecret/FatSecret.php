@@ -233,12 +233,9 @@ class FatSecret
 	private function ErrorCheck($exception)
 	{
 		if (isset($exception['error'])) {
-			App::fatal(function(Exception $exception)
-			{
-				Log::error($exception['error']['message']);
-			});
-
-			App::abort(500, $exception['error']['message']);
+			\Log::error($exception['error']['message']);
+			$backtrace = debug_backtrace();
+			throw new \ErrorException($exception['error']['message'], 0, $exception['error']['code'], __FILE__, $backtrace[0]['line']);
 		}
 	}
 }
