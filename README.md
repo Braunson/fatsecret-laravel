@@ -5,6 +5,10 @@ The FatSecret API for Laravel gives you access to the FatSecret API.
 
 [FatSecret](http://platform.fatsecret.com/api) provides you with access to comprehensive nutrition data for many thousands of foods, not to mention a range exercises and great weight management tools for your applications.
 
+Looking for 4.x Compatability?
+-------------
+While it may be unsupported now, you can find 4.x compatible versions in the `laravel4` branch or tagged with `4.0`
+
 How to Install
 --------------
 
