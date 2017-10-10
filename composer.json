@@ -1,35 +1,35 @@
 {
-  "name": "braunson/fat-secret",
-  "description": "A PHP FatSecret API library for Laravel",
-  "keywords": ["fatsecret", "laravel", "fat", "secret", "braunson"],
-  "homepage": "https://github.com/braunson/fatsecret",
-  "type": "library",
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "Braunson Yager",
-      "email": "braunson@geekybeaver.ca",
-      "homepage": "http://geekybeaver.ca"
-    }
-  ],
-  "require": {
-    "php": ">=5.4.0",
-    "illuminate/support": ">=4.2"
-  },
-  "autoload": {
-    "psr-0": {
-      "Braunson": "src/"
-    }
-  },
-  "minimum-stability": "stable",
-  "extra": {
-    "laravel": {
-      "providers": [
-        "Braunson\\FatSecret\\FatSecretServiceProvider"
-      ],
-      "aliases": {
-        "FatSecret": "Braunson\\FatSecret\\Facade"
-      }
-   }
- } 
+	"name": "braunson/fat-secret",
+	"description": "A PHP FatSecret API library for Laravel",
+	"keywords": ["fatsecret", "laravel", "fat", "secret", "braunson"],
+	"homepage": "https://github.com/braunson/fatsecret",
+	"type": "library",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Braunson Yager",
+			"email": "braunson@geekybeaver.ca",
+			"homepage": "http://geekybeaver.ca"
+		}
+	],
+	"require": {
+		"php": ">=5.4.0",
+		"illuminate/support": ">=4.2"
+	},
+	"autoload": {
+		"psr-0": {
+			"Braunson": "src/"
+		}
+	},
+	"minimum-stability": "stable",
+	"extra": {
+		"laravel": {
+			"providers": [
+				"Braunson\\FatSecret\\FatSecretServiceProvider"
+			],
+			"aliases": {
+				"FatSecret": "Braunson\\FatSecret\\Facade"
+			}
+		}
+	} 
 }
