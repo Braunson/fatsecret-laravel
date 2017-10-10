@@ -21,5 +21,15 @@
 			"Braunson": "src/"
 		}
 	},
-	"minimum-stability": "stable"
+	"minimum-stability": "stable",
+	"extra": {
+		"laravel": {
+			"providers": [
+				"Braunson\\FatSecret\\FatSecretServiceProvider"
+			],
+			"aliases": {
+				"FatSecret": "Braunson\\FatSecret\\Facade"
+			}
+		}
+	} 
 }
