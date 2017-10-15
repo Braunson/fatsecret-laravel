@@ -12,10 +12,10 @@ While it may be unsupported now, you can find 4.x compatible versions in the `la
 How to Install
 --------------
 
-1.  Install the `braunson/fatsecret` package
+1.  Install the `braunson/fatsecret-laravel` package
 
 	```shell
-	$ composer require "braunson/fatsecret"
+	$ composer require "braunson/fatsecret-laravel"
 	```
 
 2.  Update `config/app.php` to activate FatSecret package
