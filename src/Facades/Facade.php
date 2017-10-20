@@ -1,4 +1,4 @@
-<?php namespace Braunson\FatSecret;
+<?php namespace Braunson\FatSecret\Facades;
 
 use Illuminate\Support\Facades\Facade as IlluminateFacade;
 
