@@ -1,8 +1,8 @@
 {
-	"name": "braunson/fat-secret",
+	"name": "braunson/fatsecret-laravel",
 	"description": "A PHP FatSecret API library for Laravel",
 	"keywords": ["fatsecret", "laravel", "fat", "secret", "braunson"],
-	"homepage": "https://github.com/braunson/fatsecret",
+	"homepage": "https://github.com/braunson/fatsecret-laravel",
 	"type": "library",
 	"license": "MIT",
 	"authors": [
