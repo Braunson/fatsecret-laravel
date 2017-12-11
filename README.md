@@ -22,38 +22,37 @@ How to Install
 
 	```php
 	# Add `FatSecretServiceProvider` to the `providers` array
-	'providers' => array(
+	'providers' => [
 		...
-		'Braunson\FatSecret\FatSecretServiceProvider',
-	)
+		Braunson\FatSecret\ServiceProvider::class,
+	]
 
 	# Add the FatSecret Facade to the `aliases` array
-	'aliases' => array(
+	'aliases' => [
 		...
-		'FatSecret' => 'Braunson\FatSecret\Facade',
-	)
+		'FatSecret' => Braunson\FatSecret\Facades\Facade::class,
+	]
 	```
 
 
 Configuration
 -------------
 
-1. Go to `config/services.php` and add this in with your details in the provided array
+1. Publish the config file:
+
+	```
+	php artisan vendor:publish --provider="Braunson\FatSecret\ServiceProvider"
+	```
+
+2. Go to recently created `config/fatsecret.php` file and add this in with your details in the provided array
 
 	```php
 	// API Key & Secret (http://platform.fatsecret.com)
-    'fatsecret' => [
-        'secret' => env('FATSECRET_SECRET'),
-        'key' => env('FATSECRET_KEY'),
+    return [
+			'key' => 'YOUR-API-KEY',
+			'secret' => 'YOUR-API-SECRET'
     ],
 	```
-
-2. Open your `.env` file and add in
-	```
-	FATSECRET_SECRET=YOUR-API-SECRET
-	FATSECRET_KEY=YOUR-API-KEY
-	```
-
 
 Usage
 ------------------------

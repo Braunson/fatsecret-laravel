@@ -22,90 +22,47 @@ class OAuthBase
 
 	protected $unreservedChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~';
 
-	function GenerateSignature($url, $consumerKey, $consumerSecret, $token, $tokenSecret, &$normalizedUrl, &$normalizedRequestParameters)
+	function generateSignature($url, $consumerKey, $consumerSecret, $token, $tokenSecret)
 	{
-		$signatureBase = $this->GenerateSignatureBase($url, $consumerKey, $token, 'POST', $this->GenerateTimeStamp(), $this->GenerateNonce(), 'HMAC-SHA1', $normalizedUrl, $normalizedRequestParameters);
-		$secretKey = $this->UrlEncode($consumerSecret) . '&' . $this->UrlEncode($tokenSecret);
+		$signatureBase = $this->generateSignatureBase(
+			$url,
+			$consumerKey,
+			$token,
+			time(),
+			md5(uniqid()),
+			'HMAC-SHA1'
+		);
+		$secretKey = urlencode($consumerSecret) . '&' . urlencode($tokenSecret);
 
-		return base64_encode(hash_hmac('sha1', $signatureBase, $secretKey, true));
+		return base64_encode(
+			hash_hmac('sha1', $signatureBase, $secretKey, true)
+		);
 	}
 
-	private function GenerateSignatureBase($url, $consumerKey, $token, $httpMethod, $timeStamp, $nonce, $signatureType, &$normalizedUrl, &$normalizedRequestParameters)
-	{
-		$parameters = array();
+	private function generateSignatureBase(
+		$url,
+		$consumerKey,
+		$token,
+		$timeStamp,
+		$nonce,
+		$signatureType
+	) {
+		$baseParameters = [
+			OAuthBase::$OAUTH_VERSION => OAuthBase::$OAUTH_VERSION_NUMBER,
+			OAuthBase::$OAUTH_NONCE => $nonce,
+			OAuthBase::$OAUTH_TIMESTAMP => $timeStamp,
+			OAuthBase::$OAUTH_SIGNATURE_METHOD => $signatureType,
+			OAuthBase::$OAUTH_CONSUMER_KEY => $consumerKey
+		];
 
 		$elements = explode('?', $url);
-		$parameters = $this->GetQueryParameters($elements[1]);
-
-		$parameters[OAuthBase::$OAUTH_VERSION] = OAuthBase::$OAUTH_VERSION_NUMBER;
-		$parameters[OAuthBase::$OAUTH_NONCE] = $nonce;
-		$parameters[OAuthBase::$OAUTH_TIMESTAMP] = $timeStamp;
-		$parameters[OAuthBase::$OAUTH_SIGNATURE_METHOD] = $signatureType;
-		$parameters[OAuthBase::$OAUTH_CONSUMER_KEY] = $consumerKey;
+		parse_str($elements[1], $parameters);
+		$parameters = array_merge($parameters, $baseParameters);
 
 		if (!empty($token)) {
-			$parameters[ OAuthBase::$OAUTH_TOKEN] = $token;
+			$parameters[OAuthBase::$OAUTH_TOKEN] = $token;
 		}
-
-		$normalizedUrl = $elements[0];
-		$normalizedRequestParameters = $this->NormalizeRequestParameters($parameters);
-
-		return $httpMethod . '&' . UrlEncode($normalizedUrl) . '&' . UrlEncode($normalizedRequestParameters);
-	}
-
-	private function GetQueryParameters($paramString)
-	{
-		$elements = explode('&',$paramString); // was split
-		$result   = array();
-
-		foreach ($elements as $element) {
-			list($key,$token) = explode('=',$element);
-			if ($token)
-				$token = urldecode($token);
-			if (!empty($result[$key])) {
-				if (!is_array($result[$key]))
-					$result[$key] = array($result[$key],$token);
-				else
-					array_push($result[$key],$token);
-			}
-			else
-				$result[$key]=$token;
-		}
-		return $result;
-	}
-
-	private function NormalizeRequestParameters($parameters)
-	{
-		$elements = array();
 		ksort($parameters);
-
-		foreach ($parameters as $paramName => $paramValue) {
-			array_push($elements,$this->UrlEncode($paramName).'='.$this->UrlEncode($paramValue));
-		}
-
-		return join('&',$elements);
-	}
-
-	private function UrlEncode($string)
-	{
-		$string = urlencode($string);
-		$string = str_replace('+','%20',$string);
-		$string = str_replace('!','%21',$string);
-		$string = str_replace('*','%2A',$string);
-		$string = str_replace('\'','%27',$string);
-		$string = str_replace('(','%28',$string);
-		$string = str_replace(')','%29',$string);
-
-		return $string;
-	}
-
-	private function GenerateTimeStamp()
-	{
-		return time();
-	}
-
-	private function GenerateNonce()
-	{
-		return md5(uniqid());
+		return 'POST&' . UrlEncode($elements[0]) . '&' . http_build_query($parameters);
 	}
 }

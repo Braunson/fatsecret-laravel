@@ -14,46 +14,68 @@ class FatSecret
 	private $_consumerKey;
 	private $_consumerSecret;
 
+	private $api;
+	private $oauth;
+
 	/* Constructors */
-	function __construct($consumerKey, $consumerSecret)
+	function __construct(string $consumerKey, string $consumerSecret, FatSecretApi $api, OAuthBase $oauth)
 	{
 		$this->_consumerKey 	= $consumerKey;
 		$this->_consumerSecret 	= $consumerSecret;
+		$this->api = $api;
+		$this->oauth = $oauth;
 
 		return $this;
 	}
 
 	/* Properties */
 
-	function GetKey(){
+	public function getKey(){
 		return $this->_consumerKey;
 	}
 
-	function SetKey($consumerKey)
+	public function setKey($consumerKey)
 	{
 		$this->_consumerKey = $consumerKey;
 	}
 
-	function GetSecret()
+	public function getSecret()
 	{
 		return $this->_consumerSecret;
 	}
 
-	function SetSecret($consumerSecret)
+	public function setSecret($consumerSecret)
 	{
 		$this->_consumerSecret = $consumerSecret;
+	}
+
+	//TODO: This is pending to be refactored
+	private function generateSignatureForUrl($url, &$normalizedUrl, &$normalizedRequestParameters) {
+
+		$normalizedUrl;
+		$normalizedRequestParameters;
+
+		return $this->oauth->generateSignature(
+			$url,
+			$this->_consumerKey,
+			$this->_consumerSecret,
+			null,
+			null,
+			$normalizedUrl,
+			$normalizedRequestParameters
+		);
 	}
 
 	/* Public Methods */
 
 	/**
-	 * Create a new profile with a user specified ID
+	 * Create a newsprofile with a user specified ID
 	 *
 	 * @param string $userID  Your ID for the newly created profile (set to null if you are not using your own IDs)
 	 * @param string $token   The token for the newly created profile is returned here
 	 * @param string $secret  The secret for the newly created profile is returned here
 	 */
-	function ProfileCreate($userID, &$token, &$secret)
+	public function profileCreate(string $userID, string &$token, string &$secret)
 	{
 		$url = static::$base . 'method=profile.create';
 
@@ -61,16 +83,19 @@ class FatSecret
 			$url = $url . 'user_id=' . $userID;
 		}
 
-		$oauth = new OAuthBase();
+		$signature = $this->generateSignatureForUrl(
+			$url,
+			$normalizedUrl,
+			$normalizedRequestParameters
+		);
 
-		$normalizedUrl;
-		$normalizedRequestParameters;
+		$doc = new \SimpleXMLElement(
+			$this->api->getQueryResponse(
+				$normalizedUrl,
+				$normalizedRequestParameters . '&' . OAuthBase::$OAUTH_SIGNATURE . '=' . urlencode($signature))
+		);
 
-		$signature = $oauth->GenerateSignature($url, $this->_consumerKey, $this->_consumerSecret, null, null, $normalizedUrl, $normalizedRequestParameters);
-
-		$doc = new \SimpleXMLElement($this->GetQueryResponse($normalizedUrl, $normalizedRequestParameters . '&' . OAuthBase::$OAUTH_SIGNATURE . '=' . urlencode($signature)));
-
-		$this->ErrorCheck($doc);
+		$this->api->errorCheck($doc);
 
 		$token = $doc->auth_token;
 		$secret = $doc->auth_secret;
@@ -83,25 +108,25 @@ class FatSecret
 	 * @param string $token   The token for the profile is returned here
 	 * @param string $secret  The secret for the profile is returned here
 	 */
-	function ProfileGetAuth($userID, &$token, &$secret)
+	function profileGetAuth($userID, &$token, &$secret)
 	{
 		$url = static::$base . 'method=profile.get_auth&user_id=' . $userID;
 
-		$oauth = new OAuthBase();
+		$signature = $this->generateSignatureForUrl(
+			$url,
+			$normalizedUrl,
+			$normalizedRequestParameters
+		);
 
-		$normalizedUrl;
-		$normalizedRequestParameters;
+		$doc = new \SimpleXMLElement($this->api->getQueryResponse($normalizedUrl, $normalizedRequestParameters . '&' . OAuthBase::$OAUTH_SIGNATURE . '=' . urlencode($signature)));
 
-		$signature = $oauth->GenerateSignature($url, $this->_consumerKey, $this->_consumerSecret, null, null, $normalizedUrl, $normalizedRequestParameters);
-
-		$doc = new \SimpleXMLElement($this->GetQueryResponse($normalizedUrl, $normalizedRequestParameters . '&' . OAuthBase::$OAUTH_SIGNATURE . '=' . urlencode($signature)));
-
-		$this->ErrorCheck($doc);
+		$this->api->errorCheck($doc);
 
 		$token = $doc->auth_token;
 		$secret = $doc->auth_secret;
 	}
 
+	//TODO: Will check this function later
 	/**
 	 * 	Create a new session for JavaScript API users
 	 *
@@ -139,16 +164,14 @@ class FatSecret
 			$url = $url . "&cookie=true";
 		}
 
-		$oauth = new \OAuthBase();
-
 		$normalizedUrl;
 		$normalizedRequestParameters;
 
-		$signature = $oauth->GenerateSignature($url, $this->_consumerKey, $this->_consumerSecret, $auth['token'], $auth['secret'], $normalizedUrl, $normalizedRequestParameters);
+		$signature = $this->oauth->generateSignature($url, $this->_consumerKey, $this->_consumerSecret, $auth['token'], $auth['secret'], $normalizedUrl, $normalizedRequestParameters);
 
-		$doc = new \SimpleXMLElement($this->GetQueryResponse($normalizedUrl, $normalizedRequestParameters . '&' . OAuthBase::$OAUTH_SIGNATURE . '=' . urlencode($signature)));
+		$doc = new \SimpleXMLElement($this->getQueryResponse($normalizedUrl, $normalizedRequestParameters . '&' . OAuthBase::$OAUTH_SIGNATURE . '=' . urlencode($signature)));
 
-		$this->ErrorCheck($doc);
+		$this->errorCheck($doc);
 
 		$sessionKey = $doc->session_key;
 	}
@@ -156,22 +179,25 @@ class FatSecret
 	/**
 	 * Search ingredients by phrase, page and max results
 	 *
-	 * @param  string  $search_phrase The phrase you want to search for
+	 * @param  string  $searchPhrase The phrase you want to search for
 	 * @param  integer $page          The page number of results you want to return (default 0)
-	 * @param  integer $maxresults    The number of results you want returned (default 50)
+	 * @param  integer $maxResults    The number of results you want returned (default 50)
 	 * @return json
 	 */
-	public function searchIngredients($search_phrase, $page = 0, $maxresults = 50)
+	public function searchIngredients(string $searchPhrase, int $page = 0, int $maxResults = 50)
 	{
-		$url = static::$base . 'method=foods.search&page_number=' . $page . '&max_results=' . $maxresults . '&search_expression=' . $search_phrase;
+		$url = static::$base . 'method=foods.search&page_number=' . $page . '&max_results=' . $maxResults . '&search_expression=' . $searchPhrase;
 
-		$oauth = new OAuthBase();
+		$signature = $this->generateSignatureForUrl(
+			$url,
+			$normalizedUrl,
+			$normalizedRequestParameters
+		);
 
-		$normalizedUrl;
-		$normalizedRequestParameters;
-
-		$signature = $oauth->GenerateSignature($url, $this->_consumerKey, $this->_consumerSecret, null, null, $normalizedUrl, $normalizedRequestParameters);
-		$response = $this->GetQueryResponse($normalizedUrl, $normalizedRequestParameters . '&' . OAuthBase::$OAUTH_SIGNATURE . '=' . urlencode($signature));
+		$response = $this->api->getQueryResponse(
+			$normalizedUrl,
+			$normalizedRequestParameters . '&' . OAuthBase::$OAUTH_SIGNATURE . '=' . urlencode($signature)
+		);
 
 		return $response;
 	}
@@ -179,64 +205,20 @@ class FatSecret
 	/**
 	 * Retrieve an ingredient by ID
 	 *
-	 * @param  integer $ingredient_id  The ingredient ID
+	 * @param  integer $ingredientId  The ingredient ID
 	 * @return json
 	 */
-	function getIngredient($ingredient_id)
+	function getIngredient($ingredientId)
 	{
-		$url = static::$base . 'method=food.get&food_id=' . $ingredient_id;
+		$url = static::$base . 'method=food.get&food_id=' . $ingredientId;
 
-		$oauth = new OAuthBase();
-
-		$normalizedUrl;
-		$normalizedRequestParameters;
-
-		$signature = $oauth->GenerateSignature($url, $this->_consumerKey, $this->_consumerSecret, null, null, $normalizedUrl, $normalizedRequestParameters);
-		$response = $this->GetQueryResponse($normalizedUrl, $normalizedRequestParameters . '&' . OAuthBase::$OAUTH_SIGNATURE . '=' . urlencode($signature));
+		$signature = $this->generateSignatureForUrl(
+			$url,
+			$normalizedUrl,
+			$normalizedRequestParameters
+		);
+		$response = $this->api->getQueryResponse($normalizedUrl, $normalizedRequestParameters . '&' . OAuthBase::$OAUTH_SIGNATURE . '=' . urlencode($signature));
 
 		return $response;
-	}
-
-	/* Private Methods */
-
-	/**
-	 * Call the url and return the resonse
-	 *
-	 * @param string $requestUrl The url we want to call
-	 * @param array $postString  The array of fields passed in the call
-	 */
-	private function GetQueryResponse($requestUrl, $postString)
-	{
-		$ch = curl_init();
-
-		curl_setopt($ch, CURLOPT_URL, $requestUrl);
-		curl_setopt($ch, CURLOPT_HEADER, false);
-		curl_setopt($ch, CURLOPT_POST, true);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $postString);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-		$response = curl_exec($ch);
-
-		curl_close($ch);
-
-		$response = json_decode($response, true);
-
-		$this->ErrorCheck($response);
-
-		return $response;
-	}
-
-	/**
-	 * Checking for any errors, if so we throw a fatal Laravel error
-	 *
-	 * @param array $exception
-	 */
-	private function ErrorCheck($exception)
-	{
-		if (isset($exception['error'])) {
-			\Log::error($exception['error']['message']);
-			$backtrace = debug_backtrace();
-			throw new \ErrorException($exception['error']['message'], 0, $exception['error']['code'], __FILE__, $backtrace[0]['line']);
-		}
 	}
 }
