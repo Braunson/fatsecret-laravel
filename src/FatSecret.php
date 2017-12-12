@@ -1,34 +1,29 @@
 <?php
 namespace Braunson\FatSecret;
 
-use Config;
-use Exception;
-use App;
-use Log;
-
 class FatSecret
 {
 	static public $base = 'http://platform.fatsecret.com/rest/server.api?format=json&';
 
-	/* Private Data */
 	private $_consumerKey;
 	private $_consumerSecret;
-
 	private $api;
 	private $oauth;
 
-	/* Constructors */
-	function __construct(string $consumerKey, string $consumerSecret, FatSecretApi $api, OAuthBase $oauth)
-	{
+	function __construct(
+		string $consumerKey,
+		string $consumerSecret,
+		FatSecretApi $api,
+		UrlNormalizator $urlNormalizator,
+		OAuthBase $oauth
+	) {
 		$this->_consumerKey 	= $consumerKey;
 		$this->_consumerSecret 	= $consumerSecret;
 		$this->api = $api;
 		$this->oauth = $oauth;
-
+		$this->urlNormalizator = $urlNormalizator;
 		return $this;
 	}
-
-	/* Properties */
 
 	public function getKey(){
 		return $this->_consumerKey;
@@ -50,19 +45,14 @@ class FatSecret
 	}
 
 	//TODO: This is pending to be refactored
-	private function generateSignatureForUrl($url, &$normalizedUrl, &$normalizedRequestParameters) {
-
-		$normalizedUrl;
-		$normalizedRequestParameters;
+	private function generateSignatureForUrl($url, $token = null, $secret = null) {
 
 		return $this->oauth->generateSignature(
 			$url,
 			$this->_consumerKey,
 			$this->_consumerSecret,
-			null,
-			null,
-			$normalizedUrl,
-			$normalizedRequestParameters
+			$token,
+			$secret
 		);
 	}
 
@@ -71,59 +61,60 @@ class FatSecret
 	/**
 	 * Create a newsprofile with a user specified ID
 	 *
-	 * @param string $userID  Your ID for the newly created profile (set to null if you are not using your own IDs)
-	 * @param string $token   The token for the newly created profile is returned here
-	 * @param string $secret  The secret for the newly created profile is returned here
+	 * @param string $userId  Your ID for the newly created profile (set to null if you are not using your own IDs)
 	 */
-	public function profileCreate(string $userID, string &$token, string &$secret)
+	public function profileCreate(string $userId)
 	{
 		$url = static::$base . 'method=profile.create';
 
-		if(!empty($userID)){
-			$url = $url . 'user_id=' . $userID;
+		if(!empty($userId)){
+			$url = $url . 'user_id=' . $userId;
 		}
+		$this->urlNormalizator->setUrl($url);
 
 		$signature = $this->generateSignatureForUrl(
-			$url,
-			$normalizedUrl,
-			$normalizedRequestParameters
+			$this->urlNormalizator
 		);
 
 		$doc = new \SimpleXMLElement(
-			$this->api->getQueryResponse(
-				$normalizedUrl,
-				$normalizedRequestParameters . '&' . OAuthBase::$OAUTH_SIGNATURE . '=' . urlencode($signature))
+			$this->getQueryResponse($signature)
 		);
 
 		$this->api->errorCheck($doc);
 
-		$token = $doc->auth_token;
-		$secret = $doc->auth_secret;
+		//TODO: A class for this
+		return [
+			'token' => $doc->auth_token,
+			'secret' => $doc->auth_secret,
+		];
 	}
 
 	/**
 	 * Get the auth details of a profile
 	 *
-	 * @param string $userID  Your ID for the profile
-	 * @param string $token   The token for the profile is returned here
-	 * @param string $secret  The secret for the profile is returned here
+	 * @param string $userId Your id for the profile
 	 */
-	function profileGetAuth($userID, &$token, &$secret)
+	public function profileGetAuth(string $userId)
 	{
-		$url = static::$base . 'method=profile.get_auth&user_id=' . $userID;
-
-		$signature = $this->generateSignatureForUrl(
-			$url,
-			$normalizedUrl,
-			$normalizedRequestParameters
+		$this->urlNormalizator->setUrl(
+			static::$base . 'method=profile.get_auth&user_id=' . $userId
 		);
 
-		$doc = new \SimpleXMLElement($this->api->getQueryResponse($normalizedUrl, $normalizedRequestParameters . '&' . OAuthBase::$OAUTH_SIGNATURE . '=' . urlencode($signature)));
+		$signature = $this->generateSignatureForUrl(
+			$this->urlNormalizator
+		);
+
+		$doc = new \SimpleXMLElement(
+			$this->getQueryResponse($signature)
+		);
 
 		$this->api->errorCheck($doc);
 
-		$token = $doc->auth_token;
-		$secret = $doc->auth_secret;
+		//TODO: A class for this
+		return [
+			'token' => $doc->auth_token,
+			'secret' => $doc->auth_secret,
+		];
 	}
 
 	//TODO: Will check this function later
@@ -138,42 +129,49 @@ class FatSecret
 	 *                                          	0 for default)
 	 * @param string 	$permittedReferrerRegex 	A domain restriction for the session. (Set to null if you do not need this)
 	 * @param bool 		$cookie                 	The desired session_key format
-	 * @param string 	$sessionKey             	The session key for the newly created session is returned here
 	 */
 	function ProfileRequestScriptSessionKey($auth, $expires, $consumeWithin, $permittedReferrerRegex, $cookie, &$sessionKey)
 	{
 		$url = static::$base . 'method=profile.request_script_session_key';
 
 		if (!empty($auth['user_id'])) {
-			$url = $url . 'user_id=' . $auth['user_id'];
+			$url .= "user_id={$auth['user_id']}";
 		}
 
 		if ($expires > -1) {
-			$url = $url . '&expires=' . $expires;
+			$url .= "&expires={$expires}";
 		}
 
 		if ($consumeWithin > -1) {
-			$url = $url . '&consume_within=' . $consumeWithin;
+			$url .= "&consume_within={$consumeWithin}";
 		}
 
 		if (!empty($permittedReferrerRegex)) {
-			$url = $url . '&permitted_referrer_regex=' . $permittedReferrerRegex;
+			$url .= "&permitted_referred_regex={$permittedReferrerRegex}";
 		}
 
-		if ($cookie == true) {
-			$url = $url . "&cookie=true";
+		if ($cookie === true) {
+			$url .= "&cookie=true";
 		}
 
-		$normalizedUrl;
-		$normalizedRequestParameters;
+		$this->urlNormalizator->setUrl($url);
 
-		$signature = $this->oauth->generateSignature($url, $this->_consumerKey, $this->_consumerSecret, $auth['token'], $auth['secret'], $normalizedUrl, $normalizedRequestParameters);
+		$signature = $this->generateSignatureForUrl(
+			$this->urlNormalizator,
+			$auth['token'],
+			$auth['secret']
+		);
 
-		$doc = new \SimpleXMLElement($this->getQueryResponse($normalizedUrl, $normalizedRequestParameters . '&' . OAuthBase::$OAUTH_SIGNATURE . '=' . urlencode($signature)));
+		$doc = new \SimpleXMLElement(
+			$this->getQueryResponse($signature)
+		);
 
-		$this->errorCheck($doc);
+		$this->api->errorCheck($doc);
 
-		$sessionKey = $doc->session_key;
+		//TODO: A class for this
+		return [
+			'sesionKey' => $doc->session_key
+		];
 	}
 
 	/**
@@ -186,20 +184,21 @@ class FatSecret
 	 */
 	public function searchIngredients(string $searchPhrase, int $page = 0, int $maxResults = 50)
 	{
-		$url = static::$base . 'method=foods.search&page_number=' . $page . '&max_results=' . $maxResults . '&search_expression=' . $searchPhrase;
+		$this->urlNormalizator->setUrl(
+			static::$base .
+			'method=foods.search&page_number=' .
+			$page .
+			'&max_results=' .
+			$maxResults .
+			'&search_expression=' .
+			$searchPhrase
+		);
 
 		$signature = $this->generateSignatureForUrl(
-			$url,
-			$normalizedUrl,
-			$normalizedRequestParameters
+			$this->urlNormalizator
 		);
 
-		$response = $this->api->getQueryResponse(
-			$normalizedUrl,
-			$normalizedRequestParameters . '&' . OAuthBase::$OAUTH_SIGNATURE . '=' . urlencode($signature)
-		);
-
-		return $response;
+		return $this->getQueryResponse($signature);
 	}
 
 	/**
@@ -208,17 +207,26 @@ class FatSecret
 	 * @param  integer $ingredientId  The ingredient ID
 	 * @return json
 	 */
-	function getIngredient($ingredientId)
+	public function getIngredient($ingredientId)
 	{
-		$url = static::$base . 'method=food.get&food_id=' . $ingredientId;
-
-		$signature = $this->generateSignatureForUrl(
-			$url,
-			$normalizedUrl,
-			$normalizedRequestParameters
+		$this->urlNormalizator->setUrl(
+			static::$base . 'method=food.get&food_id=' . $ingredientId
 		);
-		$response = $this->api->getQueryResponse($normalizedUrl, $normalizedRequestParameters . '&' . OAuthBase::$OAUTH_SIGNATURE . '=' . urlencode($signature));
+		$signature = $this->generateSignatureForUrl(
+			$this->urlNormalizator
+		);
+		return $this->getQueryResponse($signature);
+	}
 
-		return $response;
+	//TODO: Document and refactor this
+	private function getQueryResponse($signature) {
+		return $this->api->getQueryResponse(
+			$this->urlNormalizator->getUrlBase(),
+			http_build_query($this->urlNormalizator->getParameters()).
+			'&' .
+			OAuthBase::$OAUTH_SIGNATURE .
+			'=' .
+			urlencode($signature)
+		);
 	}
 }
