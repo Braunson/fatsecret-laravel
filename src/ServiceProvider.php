@@ -21,7 +21,16 @@ class ServiceProvider extends IlluminateServiceProvider
 	{
 		$this->publishes([$this->configPath() => config_path('fatsecret.php')], 'config');
 		$this->app['fatsecret'] = $this->app->share(function($app) {
-			return new FatSecret(config('fatsecret.key'), config('fatsecret.secret'));
+			return new FatSecret(
+				config('fatsecret.key'),
+				config('fatsecret.secret'),
+				new FatSecretApi(),
+				new UrlNormalizator(),
+				new OAuthBase(
+					new NonceFactory(),
+					new TimestampFactory()
+				)
+			);
 		});
 	}
 

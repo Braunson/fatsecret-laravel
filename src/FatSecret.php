@@ -22,11 +22,13 @@ class FatSecret
 		$this->api = $api;
 		$this->oauth = $oauth;
 		$this->urlNormalizator = $urlNormalizator;
+		$this->urlNormalizator->setConsumerKey($consumerKey);
 		return $this;
 	}
 
 	public function getKey(){
 		return $this->_consumerKey;
+		$this->urlNormalizator->setConsumerKey($consumerKey);
 	}
 
 	public function setKey($consumerKey)
@@ -49,7 +51,6 @@ class FatSecret
 
 		return $this->oauth->generateSignature(
 			$url,
-			$this->_consumerKey,
 			$this->_consumerSecret,
 			$token,
 			$secret
@@ -223,9 +224,7 @@ class FatSecret
 		return $this->api->getQueryResponse(
 			$this->urlNormalizator->getUrlBase(),
 			http_build_query($this->urlNormalizator->getParameters()).
-			'&' .
-			OAuthBase::$OAUTH_SIGNATURE .
-			'=' .
+			'&oauth_signature=' .
 			urlencode($signature)
 		);
 	}
