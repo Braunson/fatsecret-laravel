@@ -5,6 +5,7 @@ namespace Tests;
 use Braunson\FatSecret\FatSecret;
 use Braunson\FatSecret\FatSecretApi;
 use Braunson\FatSecret\OAuthBase;
+use Braunson\FatSecret\UrlNormalizator;
 use Mockery;
 
 class FatSecretTest extends TestCase
@@ -13,6 +14,8 @@ class FatSecretTest extends TestCase
 		protected $fatsecret;
 		protected $api;
 		protected $oauth;
+		protected $urlNormalizator;
+
 		protected $consumerKey = 'foo';
 		protected $consumerSecret = 'bar';
 
@@ -25,6 +28,12 @@ class FatSecretTest extends TestCase
 
 				$this->oauth = Mockery::mock(OAuthBase::class);
 				app()->instance(OAuthBase::class, $this->oauth);
+
+				$this->urlNormalizator = Mockery::mock(UrlNormalizator::class);
+				app()->instance(UrlNormalizator::class, $this->urlNormalizator);
+			$this->urlNormalizator->shouldReceive('setConsumerKey')
+				->once()
+				->with($this->consumerKey);
 
 				$this->fatsecret = app()->makeWith(FatSecret::class, [
 					'consumerKey' => $this->consumerKey,
@@ -72,13 +81,25 @@ class FatSecretTest extends TestCase
 			$token = '';
 			$secret = '';
 			$xmlResponse = '<xml></xml>';
-			$this->oauth->shouldReceive('generateSignature')
-				->once();
-			$this->api->shouldReceive('getQueryResponse')
+			$this->urlNormalizator->shouldReceive('setUrl')
 				->once()
+				->with(
+					FatSecret::$base."method=profile.create&user_id={$userId}"
+				);
+			$this->urlNormalizator->shouldReceive('setUrl')
+				->once()
+				->with(
+					FatSecret::$base."method=profile.create"
+				);
+			$this->oauth->shouldReceive('generateSignature')
+				->times(2);
+			$this->api->shouldReceive('getQueryResponse')
+				->times(2)
 				->andReturn($xmlResponse);
 			$this->api->shouldReceive('errorCheck')
 				->once();
+			$this->fatsecret->profileCreate($userId, $token, $secret);
+			$userId = '';
 			$this->fatsecret->profileCreate($userId, $token, $secret);
 		}
 

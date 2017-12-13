@@ -13,6 +13,17 @@ class UrlNormalizator
 		'oauth_timestamp' => null
 	];
 
+	private $nonce;
+	private $timestamp;
+
+	function __construct(
+		NonceFactory $nonce,
+		TimestampFactory $timestamp
+	) {
+		$this->nonce = $nonce;
+		$this->timestamp = $timestamp;
+	}
+
 	public function setUrl(string $url) {
 		$elements = explode('?', $url);
 		$this->urlBase = $elements[0];
@@ -22,12 +33,12 @@ class UrlNormalizator
 		}
 	}
 
-	public function setTimestamp(int $timestamp) {
-		$this->parameters['oauth_timestamp'] = $timestamp;
+	public function generateTimestamp() {
+		$this->parameters['oauth_timestamp'] = $this->timestamp->get();
 	}
 
-	public function setNonce(string $nonce) {
-		$this->parameters['oauth_nonce'] = $nonce;
+	public function generateNonce(string $nonce) {
+		$this->parameters['oauth_nonce'] = $this->nonce->get();
 	}
 
 	public function setConsumerKey(string $consumerKey) {

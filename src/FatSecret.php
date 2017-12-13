@@ -48,7 +48,6 @@ class FatSecret
 
 	//TODO: This is pending to be refactored
 	private function generateSignatureForUrl($url, $token = null, $secret = null) {
-
 		return $this->oauth->generateSignature(
 			$url,
 			$this->_consumerSecret,
@@ -59,30 +58,30 @@ class FatSecret
 
 	/* Public Methods */
 
+	private function executeMethod(string $name, array $params, string $token = null, string $secret = null) {
+		$url = static::$base . "method=$name";
+		$url.= count($params) === 0 ?: "&" . http_build_query($params);
+		$this->urlNormalizator->setUrl($url);
+		$signature = $this->generateSignatureForUrl(
+			$this->urlNormalizator,
+			$token,
+			$secret
+		);
+		return $this->getQueryResponse($signature);
+	}
+
 	/**
 	 * Create a newsprofile with a user specified ID
 	 *
 	 * @param string $userId  Your ID for the newly created profile (set to null if you are not using your own IDs)
 	 */
-	public function profileCreate(string $userId)
+	public function profileCreate(string $userId = null)
 	{
-		$url = static::$base . 'method=profile.create';
-
-		if(!empty($userId)){
-			$url = $url . 'user_id=' . $userId;
-		}
-		$this->urlNormalizator->setUrl($url);
-
-		$signature = $this->generateSignatureForUrl(
-			$this->urlNormalizator
-		);
-
-		$doc = new \SimpleXMLElement(
-			$this->getQueryResponse($signature)
-		);
-
+		$response = $this->executeMethod('profile.create', [
+			'user_id' => empty($userId) ?: $userId
+		]);
+		$doc = new \SimpleXMLElement($response);
 		$this->api->errorCheck($doc);
-
 		//TODO: A class for this
 		return [
 			'token' => $doc->auth_token,
@@ -97,20 +96,11 @@ class FatSecret
 	 */
 	public function profileGetAuth(string $userId)
 	{
-		$this->urlNormalizator->setUrl(
-			static::$base . 'method=profile.get_auth&user_id=' . $userId
-		);
-
-		$signature = $this->generateSignatureForUrl(
-			$this->urlNormalizator
-		);
-
-		$doc = new \SimpleXMLElement(
-			$this->getQueryResponse($signature)
-		);
-
+		$response = $this->executeMethod('profile.get_auth', [
+			'user_id' => empty($userId) ?: $userId
+		]);
+		$doc = new \SimpleXMLElement($response);
 		$this->api->errorCheck($doc);
-
 		//TODO: A class for this
 		return [
 			'token' => $doc->auth_token,
@@ -133,43 +123,17 @@ class FatSecret
 	 */
 	function ProfileRequestScriptSessionKey($auth, $expires, $consumeWithin, $permittedReferrerRegex, $cookie, &$sessionKey)
 	{
-		$url = static::$base . 'method=profile.request_script_session_key';
+		$response = $this->executeMethod('profile.request_script_session_key', [
+			'user_id' => empty($auth['user_id']) ?: $auth['user_id'],
+			'expires' => $expires < 0 ?: $expires,
+			'consumeWithin' => $consumeWithin < 0 ?: $consumeWithin,
+			'permitted_referred_regex' => empty($permittedReferrerRegex) ?: $permittedReferrerRegex,
+			'cookie' => $cookie === false ?: "true"
+		], $auth['token'], $auth['secret']);
 
-		if (!empty($auth['user_id'])) {
-			$url .= "user_id={$auth['user_id']}";
-		}
-
-		if ($expires > -1) {
-			$url .= "&expires={$expires}";
-		}
-
-		if ($consumeWithin > -1) {
-			$url .= "&consume_within={$consumeWithin}";
-		}
-
-		if (!empty($permittedReferrerRegex)) {
-			$url .= "&permitted_referred_regex={$permittedReferrerRegex}";
-		}
-
-		if ($cookie === true) {
-			$url .= "&cookie=true";
-		}
-
-		$this->urlNormalizator->setUrl($url);
-
-		$signature = $this->generateSignatureForUrl(
-			$this->urlNormalizator,
-			$auth['token'],
-			$auth['secret']
-		);
-
-		$doc = new \SimpleXMLElement(
-			$this->getQueryResponse($signature)
-		);
-
+		$doc = new \SimpleXMLElement($response);
 		$this->api->errorCheck($doc);
 
-		//TODO: A class for this
 		return [
 			'sesionKey' => $doc->session_key
 		];
@@ -185,21 +149,12 @@ class FatSecret
 	 */
 	public function searchIngredients(string $searchPhrase, int $page = 0, int $maxResults = 50)
 	{
-		$this->urlNormalizator->setUrl(
-			static::$base .
-			'method=foods.search&page_number=' .
-			$page .
-			'&max_results=' .
-			$maxResults .
-			'&search_expression=' .
-			$searchPhrase
-		);
-
-		$signature = $this->generateSignatureForUrl(
-			$this->urlNormalizator
-		);
-
-		return $this->getQueryResponse($signature);
+		$response = $this->executeMethod('foods.search', [
+			'page_number' => $page,
+			'max_results' => $maxResults,
+			'search_expression' => $searchPhrase
+		]);
+		return $response;
 	}
 
 	/**
@@ -210,13 +165,10 @@ class FatSecret
 	 */
 	public function getIngredient($ingredientId)
 	{
-		$this->urlNormalizator->setUrl(
-			static::$base . 'method=food.get&food_id=' . $ingredientId
-		);
-		$signature = $this->generateSignatureForUrl(
-			$this->urlNormalizator
-		);
-		return $this->getQueryResponse($signature);
+		$response = $this->executeMethod('food.get', [
+			'food_id' => $ingredientId
+		]);
+		return $response;
 	}
 
 	//TODO: Document and refactor this
