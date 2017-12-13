@@ -37,7 +37,7 @@ class UrlNormalizator
 		$this->parameters['oauth_timestamp'] = $this->timestamp->get();
 	}
 
-	public function generateNonce(string $nonce) {
+	public function generateNonce() {
 		$this->parameters['oauth_nonce'] = $this->nonce->get();
 	}
 

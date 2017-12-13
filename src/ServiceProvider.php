@@ -25,11 +25,11 @@ class ServiceProvider extends IlluminateServiceProvider
 				config('fatsecret.key'),
 				config('fatsecret.secret'),
 				new FatSecretApi(),
-				new UrlNormalizator(),
-				new OAuthBase(
+				new UrlNormalizator(
 					new NonceFactory(),
 					new TimestampFactory()
-				)
+				),
+				new OAuthBase()
 			);
 		});
 	}
