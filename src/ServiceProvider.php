@@ -4,7 +4,6 @@ use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
 
 class ServiceProvider extends IlluminateServiceProvider
 {
-
 	/**
 	 * Indicates if loading of the provider is deferred.
 	 *
@@ -20,7 +19,7 @@ class ServiceProvider extends IlluminateServiceProvider
 	public function boot()
 	{
 		$this->publishes([$this->configPath() => config_path('fatsecret.php')], 'config');
-		$this->app['fatsecret'] = $this->app->share(function($app) {
+		$this->app['fatsecret'] = $this->app->share(function ($app) {
 			return new FatSecret(
 				config('fatsecret.key'),
 				config('fatsecret.secret'),
