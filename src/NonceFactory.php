@@ -1,4 +1,5 @@
 <?php
+
 namespace Braunson\FatSecret;
 
 class NonceFactory

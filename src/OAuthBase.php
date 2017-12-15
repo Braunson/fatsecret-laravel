@@ -10,7 +10,7 @@ class OAuthBase
         string $tokenSecret = null
     ) {
         $signatureBase = $this->generateSignatureBase($urlNormalizator, $token);
-        $secretKey = urlencode($consumerSecret) . '&' . urlencode($tokenSecret);
+        $secretKey = urlencode($consumerSecret).'&'.urlencode($tokenSecret);
 
         return base64_encode(hash_hmac('sha1', $signatureBase, $secretKey, true));
     }
@@ -26,6 +26,6 @@ class OAuthBase
             $parameters['oauth_token'] = $token;
         }
         ksort($parameters);
-        return 'POST&' . urlencode($urlNormalizator->getUrlBase()) . '&' . urlencode(http_build_query($parameters));
+        return 'POST&'.urlencode($urlNormalizator->getUrlBase()).'&'.urlencode(http_build_query($parameters));
     }
 }
