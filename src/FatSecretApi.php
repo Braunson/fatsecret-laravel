@@ -1,18 +1,14 @@
 <?php
-namespace Braunson\FatSecret;
 
-use Config;
-use Exception;
-use App;
-use Log;
+namespace Braunson\FatSecret;
 
 class FatSecretApi
 {
     /**
-     * Call the url and return the resonse
+     * Call the url and return the response.
      *
      * @param string $requestUrl The url we want to call
-     * @param array $postString  The array of fields passed in the call
+     * @param array $postString The array of fields passed in the call
      */
     public function getQueryResponse($requestUrl, $postString)
     {
@@ -36,7 +32,7 @@ class FatSecretApi
     }
 
     /**
-     * Checking for any errors, if so we throw a fatal Laravel error
+     * Checking for any errors, if so we throw a fatal Laravel error.
      *
      * @param array $exception
      */
@@ -45,6 +41,7 @@ class FatSecretApi
         if (isset($exception['error'])) {
             \Log::error($exception['error']['message']);
             $backtrace = debug_backtrace();
+
             throw new \ErrorException($exception['error']['message'], 0, $exception['error']['code'], __FILE__, $backtrace[0]['line']);
         }
     }

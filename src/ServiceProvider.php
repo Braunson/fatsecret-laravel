@@ -42,6 +42,6 @@ class ServiceProvider extends IlluminateServiceProvider
 
     protected function configPath()
     {
-        return __DIR__ . '/../config/fatsecret.php';
+        return __DIR__.'/../config/fatsecret.php';
     }
 }

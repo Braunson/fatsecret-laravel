@@ -1,4 +1,5 @@
 <?php
+
 namespace Braunson\FatSecret;
 
 class OAuthBase
@@ -26,6 +27,7 @@ class OAuthBase
             $parameters['oauth_token'] = $token;
         }
         ksort($parameters);
+
         return 'POST&'.urlencode($urlNormalizator->getUrlBase()).'&'.urlencode(http_build_query($parameters));
     }
 }

@@ -2,8 +2,10 @@ FatSecret API for Laravel
 ============================
 
 The FatSecret API for Laravel gives you access to the FatSecret API.
+[![StyleCI](https://styleci.io/repos/107026275/shield?branch=laravel5)](https://styleci.io/repos/107026275)
 
 [FatSecret](http://platform.fatsecret.com/api) provides you with access to comprehensive nutrition data for many thousands of foods, not to mention a range exercises and great weight management tools for your applications.
+[![Build Status](https://travis-ci.org/namelivia/fatsecret-laravel.svg?branch=laravel5)](https://travis-ci.org/namelivia/fatsecret-laravel)
 
 Looking for 4.x Compatability?
 -------------
