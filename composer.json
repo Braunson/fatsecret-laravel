@@ -16,20 +16,30 @@
 		"php": ">=5.4.0",
 		"illuminate/support": ">=4.2"
 	},
+	"require-dev": {
+		"phpunit/phpunit": "^6.4",
+		"mockery/mockery": "^1.0",
+    "orchestra/testbench": "~3.3"
+	},
 	"autoload": {
-		"psr-0": {
-			"Braunson": "src/"
+		"psr-4": {
+			"Braunson\\FatSecret\\": "src/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Tests\\": "tests/"
 		}
 	},
 	"minimum-stability": "stable",
 	"extra": {
 		"laravel": {
 			"providers": [
-				"Braunson\\FatSecret\\FatSecretServiceProvider"
+				"Braunson\\FatSecret\\ServiceProvider"
 			],
 			"aliases": {
-				"FatSecret": "Braunson\\FatSecret\\Facade"
+				"FatSecret": "Braunson\\FatSecret\\Facades\\Facade"
 			}
 		}
-	} 
+	}
 }
