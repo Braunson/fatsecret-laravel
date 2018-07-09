@@ -1,7 +1,7 @@
 FatSecret API for Laravel
 ============================
 [![StyleCI](https://styleci.io/repos/107026275/shield?branch=laravel5)](https://styleci.io/repos/107026275)
-[![Build Status](https://travis-ci.org/namelivia/fatsecret-laravel.svg?branch=laravel5)](https://travis-ci.org/namelivia/fatsecret-laravel)
+[![Build Status](https://travis-ci.org/braunson/fatsecret-laravel.svg?branch=laravel5)](https://travis-ci.org/braunson/fatsecret-laravel)
 
 The FatSecret API for Laravel gives you access to the FatSecret API.
 
@@ -46,14 +46,11 @@ Configuration
 	php artisan vendor:publish --provider="Braunson\FatSecret\ServiceProvider"
 	```
 
-2. Go to recently created `config/fatsecret.php` file and add this in with your details in the provided array
+2. Open your .env file and add in
 
-	```php
-	// API Key & Secret (http://platform.fatsecret.com)
-    return [
-			'key' => 'YOUR-API-KEY',
-			'secret' => 'YOUR-API-SECRET'
-    ],
+	```
+	FATSECRET_KEY=YOUR-API-KEY
+	FATSECRET_SECRET=YOUR-API-SECRET
 	```
 
 Usage

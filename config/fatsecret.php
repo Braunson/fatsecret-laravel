@@ -2,6 +2,6 @@
 
 // API Key & Secret (http://platform.fatsecret.com)
 return [
-    'key'    => 'YOUR-API-KEY',
-    'secret' => 'YOUR-API-SECRET',
+    'key'    => env('FATSECRET_KEY', 'YOUR-API-KEY'),
+    'secret' => env('FATSECRET_SECRET', 'YOUR-API-SECRET'),
 ];
