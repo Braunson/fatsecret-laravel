@@ -13,22 +13,32 @@
 		}
 	],
 	"require": {
-		"php": ">=5.4.0",
-		"illuminate/support": ">=4.2"
+		"php": "^7.1.3",
+        "illuminate/support": "5.6.*|5.7.*|5.8.*"
+    },
+	"require-dev": {
+        "phpunit/phpunit": "~7.0",
+		"mockery/mockery": "~1.0",
+        "orchestra/testbench": "3.6.*|3.7.*|3.8.*"
 	},
 	"autoload": {
-		"psr-0": {
-			"Braunson": "src/"
+		"psr-4": {
+			"Braunson\\FatSecret\\": "src/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Tests\\": "tests/"
 		}
 	},
 	"minimum-stability": "stable",
 	"extra": {
 		"laravel": {
 			"providers": [
-				"Braunson\\FatSecret\\FatSecretServiceProvider"
+				"Braunson\\FatSecret\\ServiceProvider"
 			],
 			"aliases": {
-				"FatSecret": "Braunson\\FatSecret\\Facade"
+				"FatSecret": "Braunson\\FatSecret\\Facades\\Facade"
 			}
 		}
 	} 

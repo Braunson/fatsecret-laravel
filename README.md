@@ -1,11 +1,17 @@
 FatSecret API for Laravel
 ============================
+[![StyleCI](https://styleci.io/repos/107026275/shield?branch=laravel5)](https://styleci.io/repos/107026275)
+[![Build Status](https://travis-ci.org/braunson/fatsecret-laravel.svg?branch=laravel5)](https://travis-ci.org/braunson/fatsecret-laravel)
 
 The FatSecret API for Laravel gives you access to the FatSecret API.
 
 [FatSecret](http://platform.fatsecret.com/api) provides you with access to comprehensive nutrition data for many thousands of foods, not to mention a range exercises and great weight management tools for your applications.
 
-Looking for 4.x Compatability?
+Requirements
+-------------
+- Laravel versions: 5.6, 5.7 and 5.8
+
+Looking for 4.x Compatibility?
 -------------
 While it may be unsupported now, you can find 4.x compatible versions in the `laravel4` branch or tagged with `4.0`
 
@@ -22,36 +28,32 @@ How to Install
 
 	```php
 	# Add `FatSecretServiceProvider` to the `providers` array
-	'providers' => array(
+	'providers' => [
 		...
-		'Braunson\FatSecret\FatSecretServiceProvider',
-	)
+		Braunson\FatSecret\ServiceProvider::class,
+	]
 
 	# Add the FatSecret Facade to the `aliases` array
-	'aliases' => array(
+	'aliases' => [
 		...
-		'FatSecret' => 'Braunson\FatSecret\Facade',
-	)
+		'FatSecret' => Braunson\FatSecret\Facades\Facade::class,
+	]
 	```
 
 
 Configuration
 -------------
 
-1. Go to `config/services.php` and add this in with your details in the provided array
+1. Publish the config file:
 
 	```php
-	// API Key & Secret (http://platform.fatsecret.com)
-    'fatsecret' => [
-        'secret' => env('FATSECRET_SECRET'),
-        'key' => env('FATSECRET_KEY'),
-    ],
+	php artisan vendor:publish --provider="Braunson\FatSecret\ServiceProvider"
 	```
 
 2. Open your `.env` file and add in
 	```
-	FATSECRET_SECRET=YOUR-API-SECRET
 	FATSECRET_KEY=YOUR-API-KEY
+	FATSECRET_SECRET=YOUR-API-SECRET
 	```
 
 
