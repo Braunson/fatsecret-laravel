@@ -1,5 +1,7 @@
 <?php
+
 namespace Braunson\FatSecret;
+
 class Curl
 {
 	/**
@@ -16,9 +18,12 @@ class Curl
 		curl_setopt($ch, CURLOPT_POST, true);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
 		$response = curl_exec($ch);
+		
 		curl_close($ch);
 		json_decode($response, true);
+
 		return $response;
 	}
 }

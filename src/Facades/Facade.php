@@ -1,6 +1,9 @@
 <?php
+
 namespace Braunson\FatSecret\Facades;
+
 use Illuminate\Support\Facades\Facade as IlluminateFacade;
+
 class Facade extends IlluminateFacade
 {
     /**

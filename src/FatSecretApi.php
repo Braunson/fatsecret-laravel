@@ -1,17 +1,22 @@
 <?php
+
 namespace Braunson\FatSecret;
+
 class FatSecretApi
 {
     private $urlBuilder;
     private $curl;
+
     public function __construct(
         UrlBuilder $urlBuilder,
         Curl $curl
     ) {
         $this->urlBuilder = $urlBuilder;
         $this->curl = $curl;
+
         return $this;
     }
+
     /**
      * Executes an api method.
      *
@@ -25,19 +30,23 @@ class FatSecretApi
     public function executeMethod(string $name, array $params, string $token = null, string $secret = null)
     {
         $urlBuilder = $this->urlBuilder->setMethod($name)
-           ->setTimestamp()
+            ->setTimestamp()
             ->setNonce()
             ->setMethodParameters($params)
             ->sign($token, $secret);
+
         $result = json_decode(
-          $this->curl->query(
-            $urlBuilder->getBase(),
-            http_build_query($urlBuilder->getParams())
-          )
+            $this->curl->query(
+                $urlBuilder->getBase(),
+                http_build_query($urlBuilder->getParams())
+            )
         );
+
         $this->errorCheck($result);
+        
         return $result;
     }
+
     /**
      * Checking for errors on the response, if so we throw a custom exception.
      *

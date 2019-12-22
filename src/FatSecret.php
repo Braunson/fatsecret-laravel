@@ -1,13 +1,18 @@
 <?php
+
 namespace Braunson\FatSecret;
+
 class FatSecret
 {
     private $api;
+
     public function __construct(FatSecretApi $api)
     {
         $this->api = $api;
+
         return $this;
     }
+
     /**
      * Create a newsprofile with a user specified ID.
      *
@@ -21,6 +26,7 @@ class FatSecret
             'user_id' => $userId ?: $userId,
         ]);
     }
+
     /**
      * Get the auth details of a profile.
      *
@@ -34,6 +40,7 @@ class FatSecret
             'user_id' => $userId,
         ]);
     }
+
     /**
      * Create a new session for JavaScript API users.
      *
@@ -61,6 +68,7 @@ class FatSecret
             ]
         );
     }
+
     /**
      * Search ingredients by phrase, page and max results.
      *
@@ -78,6 +86,7 @@ class FatSecret
             'search_expression' => $searchPhrase,
         ]);
     }
+    
     /**
      * Retrieve an ingredient by ID.
      *

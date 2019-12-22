@@ -1,12 +1,16 @@
 <?php
+
 namespace Braunson\FatSecret;
+
 class OAuthBase
 {
     private $consumerSecret;
+
     public function setSecret($consumerSecret)
     {
         $this->consumerSecret = $consumerSecret;
     }
+
     /**
      * Genates a new OAuth signature for a request.
      *
@@ -25,8 +29,10 @@ class OAuthBase
     ) {
         $base = $this->generateSignatureBase($url, $parameters, $token);
         $key = urlencode($this->consumerSecret).'&'.urlencode($secret);
+        
         return base64_encode(hash_hmac('sha1', $base, $key, true));
     }
+
     /**
      * Genates the signature base string.
      *
