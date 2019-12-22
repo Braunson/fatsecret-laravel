@@ -2,9 +2,9 @@
 
 namespace Tests;
 
-use Mockery;
 use Braunson\FatSecret\FatSecret;
 use Braunson\FatSecret\FatSecretApi;
+use Mockery;
 
 class FatSecretTest extends TestCase
 {

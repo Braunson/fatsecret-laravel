@@ -24,7 +24,7 @@ class NonceFactoryTest extends TestCase
             $factory->get(),
             $factory->get(),
         ];
-        
+
         $this->assertEquals(count($result), count(array_unique($result)));
     }
 }

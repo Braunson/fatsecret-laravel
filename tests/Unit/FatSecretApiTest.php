@@ -2,10 +2,10 @@
 
 namespace Tests;
 
-use Mockery;
 use Braunson\FatSecret\Curl;
-use Braunson\FatSecret\UrlBuilder;
 use Braunson\FatSecret\FatSecretApi;
+use Braunson\FatSecret\UrlBuilder;
+use Mockery;
 
 class FatSecretApiTest extends TestCase
 {
@@ -27,7 +27,7 @@ class FatSecretApiTest extends TestCase
 
         $this->methodParams = [
             'param1' => 'value1',
-            'param2' => 'value2'
+            'param2' => 'value2',
         ];
 
         $this->api = app()->make(FatSecretApi::class);
@@ -46,7 +46,7 @@ class FatSecretApiTest extends TestCase
                             ->once()
                             ->with('methodName')
                             ->andReturn($this->urlBuilder);
-                            
+
         $this->urlBuilder->shouldReceive('setTimestamp')
                             ->once()
                             ->with()

@@ -136,7 +136,7 @@ class UrlBuilder
     {
         return static::$base;
     }
-    
+
     /**
      * Gets the whole parameter set, both default and method pameters.
      *

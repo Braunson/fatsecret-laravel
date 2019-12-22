@@ -2,11 +2,11 @@
 
 namespace Tests;
 
-use Mockery;
-use Braunson\FatSecret\OAuthBase;
-use Braunson\FatSecret\UrlBuilder;
 use Braunson\FatSecret\NonceFactory;
+use Braunson\FatSecret\OAuthBase;
 use Braunson\FatSecret\TimestampFactory;
+use Braunson\FatSecret\UrlBuilder;
+use Mockery;
 
 class UrlBuilderTest extends TestCase
 {
