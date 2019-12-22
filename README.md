@@ -9,7 +9,7 @@ The FatSecret API for Laravel gives you access to the FatSecret API.
 
 Requirements
 -------------
-- Laravel version >=5.5
+- Laravel versions: 5.6, 5.7 and 5.8
 
 Looking for 4.x Compatibility?
 -------------
