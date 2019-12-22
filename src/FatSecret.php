@@ -86,7 +86,7 @@ class FatSecret
             'search_expression' => $searchPhrase,
         ]);
     }
-    
+
     /**
      * Retrieve an ingredient by ID.
      *

@@ -29,7 +29,7 @@ class OAuthBase
     ) {
         $base = $this->generateSignatureBase($url, $parameters, $token);
         $key = urlencode($this->consumerSecret).'&'.urlencode($secret);
-        
+
         return base64_encode(hash_hmac('sha1', $base, $key, true));
     }
 

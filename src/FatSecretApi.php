@@ -43,7 +43,7 @@ class FatSecretApi
         );
 
         $this->errorCheck($result);
-        
+
         return $result;
     }
 
