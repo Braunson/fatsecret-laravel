@@ -1,7 +1,8 @@
 FatSecret API for Laravel
 ============================
 [![StyleCI](https://github.styleci.io/repos/20785589/shield?branch=master)](https://styleci.io/repos/20785589)
-[![Build Status](https://travis-ci.org/braunson/fatsecret-laravel.svg?branch=laravel5)](https://travis-ci.org/braunson/fatsecret-laravel)
+[![Build Status](https://travis-ci.org/Braunson/fatsecret-laravel.svg?branch=master)](https://travis-ci.org/Braunson/fatsecret-laravel)
+[![codecov](https://codecov.io/gh/Braunson/fatsecret-laravel/branch/master/graph/badge.svg)](https://codecov.io/gh/Braunson/fatsecret-laravel)
 
 The FatSecret API for Laravel gives you access to the FatSecret API.
 
