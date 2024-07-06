@@ -1,52 +1,71 @@
 FatSecret API for Laravel
 ============================
+[![StyleCI](https://github.styleci.io/repos/20785589/shield?branch=master)](https://styleci.io/repos/20785589)
+[![Build Status](https://travis-ci.org/Braunson/fatsecret-laravel.svg?branch=master)](https://travis-ci.org/Braunson/fatsecret-laravel)
+[![codecov](https://codecov.io/gh/Braunson/fatsecret-laravel/branch/master/graph/badge.svg)](https://codecov.io/gh/Braunson/fatsecret-laravel)
 
 The FatSecret API for Laravel gives you access to the FatSecret API.
 
 [FatSecret](http://platform.fatsecret.com/api) provides you with access to comprehensive nutrition data for many thousands of foods, not to mention a range exercises and great weight management tools for your applications.
 
+Requirements
+-------------
+- Laravel versions: 5.6, 5.7 and 5.8
+
+Looking for 4.x Compatibility?
+-------------
+While it may be unsupported now, you can find 4.x compatible versions in the `laravel4` branch or tagged with `4.0`
+
 How to Install
 --------------
 
-1.  Install the `braunson/fatsecret` package
+1.  Install the `braunson/fatsecret-laravel` package
 
 	```shell
-	$ composer require "braunson/fatsecret:dev-master"
+	$ composer require "braunson/fatsecret-laravel"
 	```
 
-2.  Update `app/config/app.php` to activate FatSecret package
+2.  Update `config/app.php` to activate FatSecret package
 
 	```php
 	# Add `FatSecretServiceProvider` to the `providers` array
-	'providers' => array(
+	'providers' => [
 		...
-		'Braunson\FatSecret\FatSecretServiceProvider',
-	)
+		Braunson\FatSecret\ServiceProvider::class,
+	]
 
 	# Add the FatSecret Facade to the `aliases` array
-	'aliases' => array(
+	'aliases' => [
 		...
-		'FatSecret' => 'Braunson\FatSecret\Facade',
-	)
+		'FatSecret' => Braunson\FatSecret\Facades\Facade::class,
+	]
 	```
 
 
 Configuration
 -------------
 
-1. Go to `app/config/services.php` and add this in with your details in the provided array
+1. Publish the config file:
 
 	```php
-	// API Key & Secret (http://platform.fatsecret.com)
-	'fatsecret' => [
-		'key' 	 => 'YOUR-API-KEY-HERE',
-		'secret' => 'YOUR-API-SECRET-HERE',
-	],
+	php artisan vendor:publish --provider="Braunson\FatSecret\ServiceProvider"
+	```
+
+2. Open your `.env` file and add in
+	```
+	FATSECRET_KEY=YOUR-API-KEY
+	FATSECRET_SECRET=YOUR-API-SECRET
 	```
 
 
 Usage
 ------------------------
+
+When you are using this package in a file, make sure to add this to the top of your file:
+
+```php
+use Fatsecret;
+```
 
 The FatSecret is available as `FatSecret`, for example:
 
@@ -55,6 +74,57 @@ FatSecret::ProfileCreate($userID, &$token, &$secret);
 ```
 
 For more information on using the FatSecret API check out the [documentation](http://platform.fatsecret.com/api/)
+
+Methods
+------------------------
+
+```php
+FatSecret::searchIngredients($search_phrase, $page, $maxresults)
+```
+- Search ingredients by phrase, page and max results
+
+```php
+FatSecret::getIngredient($ingredient_id)
+```
+- Retrieve an ingredient by ID
+
+```php
+FatSecret::GetKey()
+```
+- Gets the set consumer key
+
+```php
+FatSecret::SetKey()
+```
+- Allows overriding or setting of the consumer key
+
+```php
+FatSecret::GetSecret()
+```
+- Gets the set secret key
+
+```php
+FatSecret::SetSecret()
+```
+- Allows overriding or setting of the secret key
+
+```php
+FatSecret::ProfileCreate($userID, $token, $secret)
+```
+- Allows creation of a profile in FS with a user specific ID.
+
+```php
+FatSecret::ProfileGetAuth($userID, $token, $secret)
+```
+- Get the authentication details of a profile
+
+```php
+FatSecret::ProfileRequestScriptSessionKey($auth, $expires, $consumeWithin, $permittedReferrerRegex, $cookie, $sessionKey)
+```
+- Create a new session for JavaScript API users
+
+
+
 
 
 Reporting Bugs or Feature Requests
